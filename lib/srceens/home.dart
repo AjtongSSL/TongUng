@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tong_ung/srceens/my_service.dart';
 import 'package:tong_ung/srceens/register.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -11,6 +13,23 @@ class _HomeState extends State<Home> {
   Color textColor = Colors.black;
 
   //Method
+  @override
+  void initState() {
+    super.initState();
+    checkStatus();
+  }
+
+  Future<void> checkStatus() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    FirebaseUser firebaseUser = await firebaseAuth.currentUser();
+    if (firebaseUser != null) {
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => MyService());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
+    }
+  }
+
   Widget mySizeBox() {
     return SizedBox(
       width: 5.0,
@@ -35,8 +54,9 @@ class _HomeState extends State<Home> {
       ),
       onPressed: () {
         print('U Click SignUP');
-        MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => Register());
-        Navigator.of(context).push(materialPageRoute) ;
+        MaterialPageRoute materialPageRoute =
+            MaterialPageRoute(builder: (BuildContext context) => Register());
+        Navigator.of(context).push(materialPageRoute);
       },
     );
   }

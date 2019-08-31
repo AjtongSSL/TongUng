@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "857652747024",
+    "firebase_url": "https://tongung-d4fd5.firebaseio.com",
+    "project_id": "tongung-d4fd5",
+    "storage_bucket": "tongung-d4fd5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:857652747024:android:856767a58679f0ce",
+        "android_client_info": {
+          "package_name": "com.sarngsook.tong_ung"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "857652747024-tujofhjkjrup8glqh7d727rml6anc9i9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKL46t_e-Bmb4CJiPwoCj2nC7hSCV2JXM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "857652747024-tujofhjkjrup8glqh7d727rml6anc9i9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
