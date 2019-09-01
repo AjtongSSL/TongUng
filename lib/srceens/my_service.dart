@@ -1,9 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tong_ung/models/product_model.dart';
+import 'package:tong_ung/srceens/detail.dart';
 import 'package:tong_ung/srceens/home.dart';
 import 'package:tong_ung/srceens/my_style.dart';
 import 'package:tong_ung/srceens/show_list_product.dart';
 import 'package:tong_ung/srceens/show_map.dart';
+import 'package:barcode_scan/barcode_scan.dart';
 
 class MyService extends StatefulWidget {
   @override
@@ -15,12 +19,31 @@ class _MyServiceState extends State<MyService> {
   String nameLogin = '';
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   Widget myWidget = ShowListProduct();
+  String QrCode = '';
+  List<ProductModel> productModels = [];
 
   //Method
   @override
   void initState() {
     super.initState();
     findDisplayName();
+    readProduct();
+  }
+
+  Future<void> readProduct() async {
+    Firestore firestore = Firestore.instance;
+    CollectionReference collectionReference = firestore.collection('Product');
+    await collectionReference.snapshots().listen((response) {
+      List<DocumentSnapshot> snapShots = response.documents;
+      for (var snapShot in snapShots) {
+        ProductModel productModel = ProductModel(
+            snapShot.data['Name'],
+            snapShot.data['Detail'],
+            snapShot.data['Path'],
+            snapShot.data['QRcode']);
+        productModels.add(productModel);
+      }
+    });
   }
 
   Future<void> findDisplayName() async {
@@ -41,10 +64,10 @@ class _MyServiceState extends State<MyService> {
       ),
       title: Text('Show List Product'),
       subtitle: Text('Page Show All Listview Product'),
-      onTap: (){
+      onTap: () {
         setState(() {
-         myWidget = ShowListProduct() ; 
-         Navigator.of(context).pop() ;
+          myWidget = ShowListProduct();
+          Navigator.of(context).pop();
         });
       },
     );
@@ -59,13 +82,45 @@ class _MyServiceState extends State<MyService> {
       ),
       title: Text('Show Map'),
       subtitle: Text('Page Map & Location'),
-      onTap: (){
+      onTap: () {
         setState(() {
-         myWidget = ShowMap() ; 
-         Navigator.of(context).pop() ;
+          myWidget = ShowMap();
+          Navigator.of(context).pop();
         });
       },
     );
+  }
+
+  Widget showReadQRmenu() {
+    return ListTile(
+      leading: Icon(
+        Icons.android,
+        size: 36.0,
+        color: Colors.green,
+      ),
+      title: Text('Read QR Code'),
+      subtitle: Text('Read Product by QR Code or Bar Code'),
+      onTap: () {
+        processReadQRCode();
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Future<void> processReadQRCode() async {
+    try {
+      QrCode = await BarcodeScanner.scan();
+      // print('QR Code : $QrCode');
+      for (var productModel in productModels) {
+        if (QrCode == productModel.qrCode) {
+          MaterialPageRoute materialPageRoute = MaterialPageRoute(
+              builder: (BuildContext context) => Detail(
+                    productModel: productModel,
+                  ));
+          Navigator.of(context).push(materialPageRoute);
+        }
+      }
+    } catch (e) {}
   }
 
   Widget showSignOutMenu() {
@@ -142,6 +197,8 @@ class _MyServiceState extends State<MyService> {
           showListProductMenu(),
           myDivider(),
           showMapMenu(),
+          myDivider(),
+          showReadQRmenu(),
           myDivider(),
           showSignOutMenu(),
         ],
