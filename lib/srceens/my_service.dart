@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tong_ung/srceens/home.dart';
 
 class MyService extends StatefulWidget {
   @override
@@ -60,11 +61,25 @@ class _MyServiceState extends State<MyService> {
       ),
       title: Text('Log Out'),
       subtitle: Text('Sign out & Move to Home Page'),
+      onTap: () {
+        processSignOut();
+      },
     );
   }
 
-  Widget myDivider(){
-    return Divider(color: Colors.grey,) ;
+  Future<void> processSignOut() async {
+    await firebaseAuth.signOut().then((response) {
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => Home());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
+    });
+  }
+
+  Widget myDivider() {
+    return Divider(
+      color: Colors.grey,
+    );
   }
 
   Widget showImage() {

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:tong_ung/srceens/authen.dart';
 import 'package:tong_ung/srceens/my_service.dart';
 import 'package:tong_ung/srceens/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 
 class Home extends StatefulWidget {
   @override
@@ -41,7 +43,10 @@ class _HomeState extends State<Home> {
     return RaisedButton(
       color: textColor,
       child: Text('Sign In', style: TextStyle(color: Colors.white)),
-      onPressed: () {},
+      onPressed: () {
+        MaterialPageRoute materialPageRoute = MaterialPageRoute(builder: (BuildContext context) => Authen()) ;
+        Navigator.of(context).push(materialPageRoute);
+      },
     );
   }
 
