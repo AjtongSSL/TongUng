@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tong_ung/srceens/home.dart';
+import 'package:tong_ung/srceens/my_style.dart';
+import 'package:tong_ung/srceens/show_list_product.dart';
+import 'package:tong_ung/srceens/show_map.dart';
 
 class MyService extends StatefulWidget {
   @override
@@ -11,6 +14,7 @@ class _MyServiceState extends State<MyService> {
   //Explicit
   String nameLogin = '';
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  Widget myWidget = ShowListProduct();
 
   //Method
   @override
@@ -37,6 +41,12 @@ class _MyServiceState extends State<MyService> {
       ),
       title: Text('Show List Product'),
       subtitle: Text('Page Show All Listview Product'),
+      onTap: (){
+        setState(() {
+         myWidget = ShowListProduct() ; 
+         Navigator.of(context).pop() ;
+        });
+      },
     );
   }
 
@@ -49,6 +59,12 @@ class _MyServiceState extends State<MyService> {
       ),
       title: Text('Show Map'),
       subtitle: Text('Page Map & Location'),
+      onTap: (){
+        setState(() {
+         myWidget = ShowMap() ; 
+         Navigator.of(context).pop() ;
+        });
+      },
     );
   }
 
@@ -138,8 +154,10 @@ class _MyServiceState extends State<MyService> {
     return Scaffold(
       appBar: AppBar(
         title: Text('My Service'),
+        backgroundColor: MyStyle().textColor,
       ),
-      body: Text('body'),
+      //body: Text('body'),
+      body: myWidget,
       drawer: menuDrawer(),
     );
   }

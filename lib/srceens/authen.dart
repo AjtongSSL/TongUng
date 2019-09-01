@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tong_ung/srceens/my_service.dart';
 import 'package:tong_ung/srceens/my_style.dart';
 
 class Authen extends StatefulWidget {
@@ -9,6 +11,10 @@ class Authen extends StatefulWidget {
 class _AuthenState extends State<Authen> {
   //Explicit
   Color textColor = MyStyle().textColor;
+  final formKey = GlobalKey<FormState>();
+  String email = '',
+      password = ''; //need initial value for firebase should not be null
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   //Method
   Widget passwordText() {
@@ -26,6 +32,9 @@ class _AuthenState extends State<Authen> {
           ),
           hintText: 'More than 6 characters',
         ),
+        onSaved: (String value) {
+          password = value.trim();
+        },
       ),
     );
   }
@@ -44,6 +53,9 @@ class _AuthenState extends State<Authen> {
           ),
           hintText: 'you@email.com',
         ),
+        onSaved: (String value) {
+          email = value.trim();
+        },
       ),
     );
   }
@@ -83,13 +95,16 @@ class _AuthenState extends State<Authen> {
           radius: 1.0,
         ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          showAppName(),
-          emailText(),
-          passwordText(),
-        ],
+      child: Form(
+        key: formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            showAppName(),
+            emailText(),
+            passwordText(),
+          ],
+        ),
       ),
     );
   }
@@ -107,9 +122,40 @@ class _AuthenState extends State<Authen> {
     );
   }
 
+  Future<void> checkAuthen() async {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth
+        .signInWithEmailAndPassword(email: email, password: password)
+        .then((response) {
+      print('Login Success');
+      MaterialPageRoute materialPageRoute =
+          MaterialPageRoute(builder: (BuildContext context) => MyService());
+      Navigator.of(context).pushAndRemoveUntil(
+          materialPageRoute, (Route<dynamic> route) => false);
+    }).catchError((response) {
+      print('Error Login');
+      String message = response.message;
+      mySnackBar(message);
+    });
+  }
+
+  void mySnackBar(String message) {
+    SnackBar snackBar = SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.orange.shade700,
+      duration: Duration(seconds: 10),
+      action: SnackBarAction(
+        label: 'Close',
+        onPressed: () {},
+      ),
+    );
+    scaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       body: SafeArea(
         child: Stack(
           children: <Widget>[
@@ -125,7 +171,11 @@ class _AuthenState extends State<Authen> {
           size: 36.0,
           color: textColor,
         ),
-        onPressed: () {},
+        onPressed: () {
+          formKey.currentState.save();
+          print('Email : $email , Password : $password');
+          checkAuthen();
+        },
       ),
     );
   }
